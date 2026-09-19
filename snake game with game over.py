@@ -1,0 +1,71 @@
+import pygame 
+import random 
+pygame.init() 
+screen = pygame.display.set_mode((600,600))
+pygame.display.set_caption('SNAKE')
+snake= [(100,100),(80,100),(60,100)]
+font = pygame.font.Font(None,36)
+score=0
+x=100 
+y=100 
+food_x=200
+food_y= 120                           
+running= True 
+apple_img = pygame.image.load ("apple.png").convert_alpha()
+apple_img = pygame.transform.scale(apple_img,(20,20))
+clock = pygame.time.Clock()
+direction = (20,0)
+pygame.mixer.init()
+sound = pygame.mixer.Sound("snake.mp3")
+eat= pygame.mixer.Sound("eat.mp3")
+sound.play()
+longer = (10,10)
+while running:
+ for event in pygame.event.get():
+  if event.type == pygame.QUIT:
+    running=False
+  elif event.type== pygame.KEYDOWN: 
+    if event.key == pygame.K_w:
+      direction = (0, -20)
+    elif event.key == pygame.K_s:
+      direction = (0, 20)
+    elif event.key == pygame.K_a:
+      direction = (-20, 0)
+    elif event.key == pygame.K_d:
+      direction = (20, 0)
+      #calculation
+ head_x , head_y= snake[0]
+ new_head = (head_x + direction[0],head_y + direction[1]) 
+ #divar
+ if new_head[0]<0 or new_head[0]>580 or new_head[1]<0 or new_head[1]>580:
+   screen.fill((204,255,255))
+   game_over_text= font.render("GAME OVER", True,(204,0,102))
+   screen.blit(game_over_text,(200,250))
+   pygame.display.flip()
+   pygame.time.delay(1500) 
+   snake = [(100, 100), (80, 100), (60, 100)]
+   direction = (20, 0)
+   score = 0
+   food_x = 200
+   food_y = 100
+   continue
+ #food
+ ate_food= new_head == (food_x, food_y)
+ snake.insert(0,new_head)
+ if ate_food :
+    score +=1
+    eat.play()
+    food_x=random.randrange(0,600,20)
+    food_y=random.randrange(0,600,20)
+ else: 
+    snake.pop() 
+ screen.fill((204,255,255))
+ score_text=font.render(f'Score :{score}', True , (153,0,0))
+ screen.blit(score_text, (10,10))
+ for x, y in snake:
+     pygame.draw.rect(screen,(25,51,0),(x,y,20,20))
+ screen.blit(apple_img,(food_x,food_y))
+ pygame.display.flip()
+ clock.tick(10)
+pygame.QUIT()
+
